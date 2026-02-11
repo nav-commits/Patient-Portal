@@ -1,47 +1,71 @@
 "use client";
 
+import { useState } from "react";
 import { VStack, Flex, Icon, Text, Box } from "@chakra-ui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IoHome } from "react-icons/io5";
-import { HiDocumentReport, HiUser } from "react-icons/hi";
+import { IoArrowBack, IoArrowForward } from "react-icons/io5";
+import { HiDocumentReport, HiUser ,  HiViewGrid} from "react-icons/hi";
 import Image from "next/image";
 
 const links = [
-  { label: "Dashboard", href: "/dashboard", icon: IoHome },
-  { label: "Lab Results", href: "/dashboard/results", icon: HiDocumentReport },
-  { label: "Personal Info", href: "/dashboard/profile", icon: HiUser },
+  { label: "Home", href: "/patient", icon: HiViewGrid },
+  { label: "Lab Results", href: "/patient/results", icon: HiDocumentReport },
+  { label: "Personal Info", href: "/patient/profile", icon: HiUser },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
     <VStack
-      width="250px"
+      width={isCollapsed ? "80px" : "250px"}
       bgColor="blue.900"
       borderRight="1px solid"
       borderColor="gray.800"
       p={4}
       align="stretch"
+      transition="width 0.2s"
+      minH="100vh"  
     >
-      <Box w="full" textAlign="center" mb={10} mt={3}>
-        <Image
-          src="/Images/mhl-logo-white.png"
-          alt="Med-Health Lab Logo"
-          width={210}      
-          height={90}     
-          style={{ objectFit: "contain" }}
+      <Flex
+        w="full"
+        align="center"
+        justify={isCollapsed ? "center" : "space-between"}
+        mb={8}
+        gap={4}
+      >
+        {!isCollapsed && (
+          <Box>
+            <Image
+              src="/Images/mhl-logo-white.png"
+              alt="Med-Health Lab Logo"
+              width={200}
+              height={70}
+              style={{ objectFit: "contain" }}
+            />
+          </Box>
+        )}
+        <Icon
+          as={isCollapsed ? IoArrowForward : IoArrowBack}
+          w={6}
+          h={6}
+          color="white"
+          cursor="pointer"
+          onClick={() => setIsCollapsed(!isCollapsed)}
         />
-      </Box>
-      <VStack align="stretch">
+      </Flex>
+
+      {/* Links */}
+      <VStack align="stretch" flex="1">
         {links.map((link) => {
           const isActive = pathname === link.href;
           return (
             <Link key={link.label} href={link.href} passHref>
               <Flex
                 align="center"
-                gap={3}
+                gap={isCollapsed ? 0 : 3}
                 px={3}
                 py={2}
                 borderRadius="md"
@@ -49,6 +73,7 @@ export default function Sidebar() {
                 bg={isActive ? "white" : "transparent"}
                 _hover={{ bg: isActive ? "white" : "blue.800" }}
                 transition="all 0.2s"
+                justify={isCollapsed ? "center" : "flex-start"}
               >
                 <Icon
                   as={link.icon}
@@ -56,12 +81,14 @@ export default function Sidebar() {
                   h={5}
                   color={isActive ? "blue.900" : "white"}
                 />
-                <Text
-                  fontWeight="semibold"
-                  color={isActive ? "blue.900" : "white"}
-                >
-                  {link.label}
-                </Text>
+                {!isCollapsed && (
+                  <Text
+                    fontWeight="semibold"
+                    color={isActive ? "blue.900" : "white"}
+                  >
+                    {link.label}
+                  </Text>
+                )}
               </Flex>
             </Link>
           );

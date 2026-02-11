@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Text, Spacer, Avatar, Box, Menu } from "@chakra-ui/react";
+import { Flex, Text, Avatar, Box, Menu } from "@chakra-ui/react";
 import { FaChevronDown } from "react-icons/fa";
 
 export default function Header() {
@@ -8,17 +8,20 @@ export default function Header() {
     <Flex
       w="100%"
       h="90px"
-      align="center"
       px={10}
       bg="blue.900"
-      justify="space-between"
       borderBottom="1px solid"
       borderColor="blue.800"
+      align="center"
+      justify="space-between"
     >
-      <Text fontSize="2xl" fontWeight="bold" color="white">
-        Med-Health-Laboratory
+      <Text
+        fontSize={{ base: "sm", md: "2xl" }}
+        fontWeight="bold"
+        color="white"
+      >
+        Med Health Laboratory
       </Text>
-
       <Flex align="center" gap={3}>
         <Box textAlign="right">
           <Text fontSize="sm" fontWeight="semibold" color="white">

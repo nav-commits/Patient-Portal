@@ -23,7 +23,7 @@ export default function Home() {
         }}
         transition="all 0.3s ease"
       >
-        <Link href="/dashboard">View Results</Link>
+        <Link href="/patient">View Results</Link>
       </Button>
     </Box>
   );
