@@ -16,7 +16,7 @@ export default function Profile() {
     dob: "1994-03-17",
     age: 31,
     gender: "Male",
-    address: "168 Eden Brookhill Dr., Brampton, ON L7A 2C1, CA",
+    address: "168 Edenbrookhill Dr., Brampton, ON L7A 2C1, CA",
     lastService: "February 18, 2025",
     phone: "905-495-3467",
     primaryCare: "Not Provided",
