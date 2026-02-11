@@ -5,7 +5,7 @@ import { VStack, Flex, Icon, Text, Box } from "@chakra-ui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
-import { HiDocumentReport, HiUser ,  HiViewGrid} from "react-icons/hi";
+import { HiDocumentReport, HiUser, HiViewGrid } from "react-icons/hi";
 import Image from "next/image";
 
 const links = [
@@ -27,14 +27,14 @@ export default function Sidebar() {
       p={4}
       align="stretch"
       transition="width 0.2s"
-      minH="100vh"  
+      minH="100vh"
     >
       <Flex
         w="full"
         align="center"
         justify={isCollapsed ? "center" : "space-between"}
-        mb={8}
         gap={4}
+        mt={2}
       >
         {!isCollapsed && (
           <Box>
@@ -56,9 +56,7 @@ export default function Sidebar() {
           onClick={() => setIsCollapsed(!isCollapsed)}
         />
       </Flex>
-
-      {/* Links */}
-      <VStack align="stretch" flex="1">
+      <VStack align="stretch" flex="1" mt="100px">
         {links.map((link) => {
           const isActive = pathname === link.href;
           return (

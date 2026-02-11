@@ -12,7 +12,7 @@ import Link from "next/link";
 
 export default function Dashboard() {
   return (
-    <Flex direction="column" minH="60vh" px={4} py={10} bg="gray.50" gap={6}>
+    <Flex direction="column" px={4} py={10} bg="gray.50" gap={6}>
       <Heading mb={2}>Welcome Navdeep Dhamrait</Heading>
       <Text fontSize="md">
         Hello! Here in your Med-Health Laboratory Patient Portal, you can
@@ -28,19 +28,29 @@ export default function Dashboard() {
           fontWeight="semibold"
         >
           Lab Results
-        </ChakraLink>{" "}
+        </ChakraLink>
+        {" "} 
         page. If you have any questions about your results, our staff is here to
         help.
       </Text>
-      <Box mt={6}>
-        <Link href="/dashboard/results" passHref>
-          <Button colorScheme="blue" size="lg">
+      <Box>
+        <Link href="/patient/results" passHref>
+          <Button
+            bg="blue.900"
+            color="white"
+            _hover={{
+              bg: "white",
+              color: "blue.900",
+              border: "1px solid",
+              borderColor: "blue.900",
+            }}
+            transition="all 0.3s ease"
+          >
             View Lab Results
           </Button>
         </Link>
       </Box>
-
-      <Text fontSize="sm" mt={4}>
+      <Text fontSize="sm" mt={2}>
         Need to update your personal information or profile settings? Click on
         the "Personal Info" tab in the sidebar to keep your records up to date.
       </Text>
