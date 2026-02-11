@@ -1,48 +1,98 @@
-import { VStack, Flex, Heading, Icon, Text } from "@chakra-ui/react";
+"use client";
+
+import { useState } from "react";
+import { VStack, Flex, Icon, Text, Box } from "@chakra-ui/react";
 import Link from "next/link";
-import { IoHome } from "react-icons/io5";
-import { HiDocumentReport, HiUser } from "react-icons/hi";
+import { usePathname } from "next/navigation";
+import { IoArrowBack, IoArrowForward } from "react-icons/io5";
+import { HiDocumentReport, HiUser ,  HiViewGrid} from "react-icons/hi";
 import Image from "next/image";
+
 const links = [
-  { label: "Dashboard", href: "/dashboard", icon: IoHome },
-  { label: "Lab Results", href: "/dashboard/results", icon: HiDocumentReport },
-  { label: "Personal Info", href: "/dashboard/profile", icon: HiUser },
+  { label: "Home", href: "/patient", icon: HiViewGrid },
+  { label: "Lab Results", href: "/patient/results", icon: HiDocumentReport },
+  { label: "Personal Info", href: "/patient/profile", icon: HiUser },
 ];
 
 export default function Sidebar() {
+  const pathname = usePathname();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   return (
     <VStack
-      width="250px"
-      bg="white"
+      width={isCollapsed ? "80px" : "250px"}
+      bgColor="blue.900"
       borderRight="1px solid"
-      borderColor="gray.200"
+      borderColor="gray.800"
       p={4}
-      bgColor={"blue.900"}
       align="stretch"
+      transition="width 0.2s"
+      minH="100vh"  
     >
-      <Image
-        src="/Images/mhl-logo-white.png"
-        alt="Profile Picture"
-        width={250}
-        height={350}
-      />
-      <VStack align="stretch" mt={8}>
-        {links.map((link) => (
-          <Flex
-            key={link.label}
-            gap={3}
-            align="center"
-            px={2}
-            py={2}
-            _hover={{ cursor: "pointer" }}
-            borderRadius="md"
-          >
-            <Icon as={link.icon} w={5} h={5} color={"white"} />
-            <Text fontWeight="semibold" color={"white"}>
-              <Link href={link.href}>{link.label}</Link>
-            </Text>
-          </Flex>
-        ))}
+      <Flex
+        w="full"
+        align="center"
+        justify={isCollapsed ? "center" : "space-between"}
+        mb={8}
+        gap={4}
+      >
+        {!isCollapsed && (
+          <Box>
+            <Image
+              src="/Images/mhl-logo-white.png"
+              alt="Med-Health Lab Logo"
+              width={200}
+              height={70}
+              style={{ objectFit: "contain" }}
+            />
+          </Box>
+        )}
+        <Icon
+          as={isCollapsed ? IoArrowForward : IoArrowBack}
+          w={6}
+          h={6}
+          color="white"
+          cursor="pointer"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+        />
+      </Flex>
+
+      {/* Links */}
+      <VStack align="stretch" flex="1">
+        {links.map((link) => {
+          const isActive = pathname === link.href;
+          return (
+            <Link key={link.label} href={link.href} passHref>
+              <Flex
+                align="center"
+                gap={isCollapsed ? 0 : 3}
+                px={3}
+                py={2}
+                borderRadius="md"
+                cursor="pointer"
+                bg={isActive ? "white" : "transparent"}
+                _hover={{ bg: isActive ? "white" : "blue.800" }}
+                transition="all 0.2s"
+                justify={isCollapsed ? "center" : "flex-start"}
+              >
+                <Icon
+                  as={link.icon}
+                  w={5}
+                  h={5}
+                  color={isActive ? "blue.900" : "white"}
+                />
+                {!isCollapsed && (
+                  <Text
+                    fontWeight="semibold"
+                    color={isActive ? "blue.900" : "white"}
+                  >
+                    {link.label}
+                  </Text>
+                )}
+              </Flex>
+            </Link>
+          );
+        })}
       </VStack>
     </VStack>
   );
