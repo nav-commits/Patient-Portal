@@ -1,37 +1,49 @@
 "use client";
 
-import { Flex, Text, Spacer, Avatar, Box } from "@chakra-ui/react";
+import { Flex, Text, Spacer, Avatar, Box, Menu } from "@chakra-ui/react";
+import { FaChevronDown } from "react-icons/fa";
 
 export default function Header() {
   return (
     <Flex
       w="100%"
-      h="60px"
+      h="90px"
       align="center"
-      px={6}
-      bg="blue.800" 
+      px={10}
+      bg="blue.900"
+      justify="space-between"
       borderBottom="1px solid"
-      bgColor={"blue.900"}
+      borderColor="blue.800"
     >
-      {/* Welcome Text */}
-      <Text fontSize="xl" fontWeight="bold" color="white">
-        Welcome
+      <Text fontSize="2xl" fontWeight="bold" color="white">
+        Med-Health-Laboratory
       </Text>
-      <Spacer />
-      {/* User Info */}
+
       <Flex align="center" gap={3}>
         <Box textAlign="right">
           <Text fontSize="sm" fontWeight="semibold" color="white">
-            John Doe
+            Navdeep Dhamrait
           </Text>
           <Text fontSize="xs" color="blue.200">
             Patient
           </Text>
         </Box>
-        <Avatar.Root>
-          <Avatar.Fallback name="Segun Adebayo" />
-          <Avatar.Image src="https://bit.ly/sage-adebayo" />
+        <Avatar.Root size="sm">
+          <Avatar.Fallback name="Navdeep Dhamrait" />
         </Avatar.Root>
+        <Menu.Root>
+          <Menu.Trigger asChild>
+            <Box cursor="pointer" color="white">
+              <FaChevronDown size={16} />
+            </Box>
+          </Menu.Trigger>
+          <Menu.Positioner>
+            <Menu.Content>
+              <Menu.Item value="profile">Go to Profile</Menu.Item>
+              <Menu.Item value="signout">Sign Out</Menu.Item>
+            </Menu.Content>
+          </Menu.Positioner>
+        </Menu.Root>
       </Flex>
     </Flex>
   );

@@ -6,8 +6,7 @@ export default function Dashboard() {
   return (
     <Box>
       <Flex gap={1} flexDirection={"column"}>
-        <Heading mb={4}>Welcome to the dashboard</Heading>
-        <Text>We have all your test results here</Text>
+        <Heading  mb={4}>Welcome to the dashboard</Heading>
       </Flex>
     </Box>
   );
