@@ -13,7 +13,7 @@ import Link from "next/link";
 export default function Dashboard() {
   return (
     <Flex direction="column" px={4} py={10} bg="gray.50" gap={6}>
-      <Heading mb={2}>Welcome Navdeep Dhamrait</Heading>
+      <Heading size={'xl'} mb={2}>Welcome Navdeep Dhamrait</Heading>
       <Text fontSize="md">
         Hello! Here in your Med-Health Laboratory Patient Portal, you can
         securely access your personal information and view your lab results

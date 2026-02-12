@@ -10,14 +10,15 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Flex minH="100vh">
-      <Sidebar />
-      <Flex direction="column" flex="1">
-        <Header />
-        <Box flex="1" p={6} overflowY="auto">
-          {children}
-        </Box>
-      </Flex>
-    </Flex>
+    <Flex h="100vh" overflow="hidden">
+  <Sidebar />
+  <Flex direction="column" flex="1" overflow="hidden">
+    <Header />
+    <Box flex="1" minH="0" p={6} overflowY="auto">
+      {children}
+    </Box>
+  </Flex>
+</Flex>
+
   );
 }

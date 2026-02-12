@@ -24,7 +24,7 @@ export default function Sidebar() {
       bgColor="blue.900"
       borderRight="1px solid"
       borderColor="gray.800"
-      p={4}
+      p={6}
       align="stretch"
       transition="width 0.2s"
       minH="100vh"
