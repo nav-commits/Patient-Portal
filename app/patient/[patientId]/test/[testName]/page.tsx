@@ -54,7 +54,7 @@ export default function TestPage() {
       ) : (
         <>
           <Box mb={6}>
-            <Table.Root size="sm">
+            <Table.Root size="md">
               <Table.Header>
                 <Table.Row>
                   <Table.ColumnHeader>Date</Table.ColumnHeader>
