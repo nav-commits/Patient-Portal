@@ -46,7 +46,7 @@ export default function TestPage() {
   return (
     <Box mt={10}>
       <Heading size="xl" mb={4}>
-        {patient.name} – {testName} Results
+        {patient.name} – Showing your historical results for  {testName}
       </Heading>
 
       {testResults.length === 0 ? (
@@ -75,7 +75,7 @@ export default function TestPage() {
               </Table.Body>
             </Table.Root>
           </Box>
-          <Chart.Root maxH="md" chart={chart}>
+          <Chart.Root mt={12} maxH="md" chart={chart}>
             <LineChart data={chart.data}>
               <CartesianGrid stroke={chart.color("border")} vertical={false} />
               <XAxis
@@ -83,12 +83,14 @@ export default function TestPage() {
                 axisLine={false}
                 tickLine={false}
                 stroke={chart.color("border")}
+                label={{ value: "Time", position: "bottom" }}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
                 tickMargin={10}
                 stroke={chart.color("border")}
+                label={{ value: "Results", position: "left", angle: -90 }}
               />
               <Tooltip
                 animationDuration={100}
