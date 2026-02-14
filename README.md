@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Med Health Laboratory – Patient Portal
 
-## Getting Started
+A secure **Next.js** application that allows patients to view and download their medical test results, such as blood, urine, and other lab tests. Built with **Chakra UI** for a modern, accessible interface and **React PDF** for downloading results.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🏗️ Technology Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Next.js 16** – Server-side rendering and routing  
+- **React 19** – Frontend library  
+- **TypeScript 5** – Type safety  
+- **Chakra UI 3** – Component library and theming  
+- **@chakra-ui/charts 3** – Line charts and visualizations for test results  
+- **@react-pdf/renderer 4** – PDF generation for test results  
+- **Framer Motion 12** – Animations  
+- **date-fns 4** – Date formatting  
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ⚡ Features
 
-## Learn More
+- View personal patient information  
+- Display a list of test results (blood, urine, etc.)  
+- **Line charts** for tracking results over time using Chakra UI Charts  
+- Download results as PDF  
+- Status tracking for each test  
+- Responsive, professional UI  
+- Mock data used for development  
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎨 Pages
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Home / Dashboard** – Overview of available tests and their status  
+2. **Personal Details** – Patient profile information  
+3. **Results** – Detailed test results with **line graphs** and download option  
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📄 PDF Download
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Test results can be exported as a **PDF** using the built-in download button on the results page. Each PDF includes:
+
+- Patient information  
+- Test type and date  
+- Individual test results  
+- Reference ranges  
+
+---
+
+## 🧪 Mock Data
+
+- **Patients** – Name, contact info, and avatar  
+- **Test Results** – Blood, urine, and other lab tests over time  
+- **PDF Downloads** – Sample reports for testing PDF generation  
+
+> All data is mock data for development purposes only.
+
+---
+
+## ⚙️ Scripts
+
+- `dev` – Start development server  
+- `build` – Build production app  
+- `start` – Run production server  
+- `lint` – Run ESLint  
+
+---
+
+## 📌 Notes
+
+- This project is a **patient portal prototype**.  
+- Real patient data and authentication should be implemented before production use.  
+- UI and charts are fully built with **Chakra UI**, no Tailwind CSS used.  
+
+---
+
+**Author:** Navdeep Dhamrait  
+**Repository:** [Patient Portal](https://github.com/nav-commits/Patient-Portal)
+
