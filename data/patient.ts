@@ -1,11 +1,10 @@
 
-interface LabResult {
+export interface LabResult {
     date: string;
     orderedItems: string[];
     results: Record<string, number | string>;
     units: Record<string, string>;
     referenceRanges: Record<string, string>;
-    pdfUrl: string;
   }
   
   export interface Patient {
@@ -83,7 +82,6 @@ interface LabResult {
           "Chol:HDL Ratio": "-", "NON-HDL Choleste": "-", Fasting: "-", "TSH Ultra-sens": "0.35-4.94",
           "Vitamin B12": "133-675", Ferritin: "30-300", "VitD 25Hydroxy": "76-175", MicroalbuminRDMU: "-", "Urine Creatinine": "-", "MAL/Creat Ratio2": "-"
         },
-        pdfUrl: "https://example.com/demo-navdeep-feb2025.pdf",
       },
       {
         date: "2024-12-31T09:00:00", 
@@ -130,12 +128,18 @@ interface LabResult {
           "Chol:HDL Ratio": "-", "NON-HDL Choleste": "-", Fasting: "-", "TSH Ultra-sens": "0.35-4.94",
           "Vitamin B12": "133-675", Ferritin: "30-300", MicroalbuminRDMU: "-", "Urine Creatinine": "-", "MAL/Creat Ratio2": "-"
         },
-        pdfUrl: "https://example.com/demo-navdeep-2024.pdf",
       },
       {
         date: "2023-02-15T09:00:00",
         orderedItems: [
-          "LOCATION","BSF","A1C","TSH","CRT","BUA","SOD","POT","CHL","ALT","ALP","FAT","FH11","B12","FER","CRR","UNA","CBC","VD25U","DOCSCC","PAT_BC","NHDL","LDL","C/H","EGFR_M2","LDL_1","CRR1","CRR1_1"
+          "WBC","RBC","Hemoglobin","Hematocrit","Platelet Count","MCV","MCH","MCHC","RDW",
+          "Neutrophil","Lymphocyte","Monocyte","Eosinophil","Basophil",
+          "SpecificGravity","pH","Sugar (Urine)","Protein (Urine)","Ketone","Blood","Leukocytes","Nitrite",
+          "Glucose Fasting","HbA1C","Creatinine","eGFR","Sodium","Potassium","Chloride",
+          "Alk Phosphatase","ALT (SGPT)","Uric Acid","Cholesterol","Triglycerides",
+          "HDL Cholesterol","LDL Cholesterol","Chol:HDL Ratio","NON-HDL Choleste",
+          "Fasting","TSH Ultra-sens","Vitamin B12","Ferritin","VitD 25Hydroxy",
+          "MicroalbuminRDMU","Urine Creatinine","MAL/Creat Ratio1"
         ],
         results: {
           WBC: 5.1, RBC: 4.76, Hemoglobin: 143, Hematocrit: 0.421, "Platelet Count": 186,
@@ -173,13 +177,20 @@ interface LabResult {
           "Chol:HDL Ratio": "-", "NON-HDL Choleste": "-", Fasting: "-", "TSH Ultra-sens": "0.35-4.94",
           "Vitamin B12": "133-675", Ferritin: "30-300", "VitD 25Hydroxy": "76-175", MicroalbuminRDMU: "-", "Urine Creatinine": "-", "MAL/Creat Ratio1": "-"
         },
-        pdfUrl: "https://example.com/demo-navdeep-2023.pdf"
       },
       {
         date: "2022-01-15T09:00:00", 
         orderedItems: [
-          "LOCATION","BSF","A1C","TSH","CRT","BUA","SOD","POT","CHL","ALT","ALP","FAT","FH11","B12","FER","CRR","UNA","CBC","VD25U","PAT_BC2","DOCSCC","PAT_BC","NHDL","LDL","C/H","EGFR_M2","LDL_1","CRR1","CRR1_2"
+          "WBC","RBC","Hemoglobin","Hematocrit","Platelet Count","MCV","MCH","MCHC","RDW",
+          "Neutrophil","Lymphocyte","Monocyte","Eosinophil","Basophil",
+          "SpecificGravity","pH","Sugar (Urine)","Protein (Urine)","Ketone","Blood","Leukocytes","Nitrite",
+          "Glucose Fasting","HbA1C","Creatinine","eGFR","Sodium","Potassium","Chloride",
+          "Alk Phosphatase","ALT (SGPT)","Uric Acid","Cholesterol","Triglycerides",
+          "HDL Cholesterol","LDL Cholesterol","Chol:HDL Ratio","NON-HDL Choleste",
+          "Fasting","TSH Ultra-sens","Vitamin B12","Ferritin","VitD 25Hydroxy",
+          "MicroalbuminRDMU","Urine Creatinine","MAL/Creat Ratio2"
         ],
+        
         results: {
           WBC: 5.7, RBC: 4.70, Hemoglobin: 140, Hematocrit: 0.416, "Platelet Count": 180,
           MCV: 88.6, MCH: 29.9, MCHC: 337, RDW: 13.6,
@@ -216,14 +227,22 @@ interface LabResult {
           "Chol:HDL Ratio": "-", "NON-HDL Choleste": "-", Fasting: "-", "TSH Ultra-sens": "0.35-4.94",
           "Vitamin B12": "133-675", Ferritin: "30-300", "VitD 25Hydroxy": "76-175", MicroalbuminRDMU: "-", "Urine Creatinine": "-", "MAL/Creat Ratio2": "-"
         },
-        pdfUrl: "https://example.com/demo-navdeep-2022.pdf"
       }
      ,
      {
       date: "2021-01-10T09:00:00", 
       orderedItems: [
-        "LOCATION","BSF","A1C","TSH","CRT","BUA","SOD","POT","CHL","CPK","ALT","ALP","FAT","FH11","B12","FER","CRR","UNA","CBC","HAV","HBG","HCV","PAT_BC2","DOCSCC","PAT_BC","NHDL","LDL","C/H","EGFR_M2","LDL_1","CRR1","CRR1_1"
+        "WBC","RBC","Hemoglobin","Hematocrit","Platelet Count","MCV","MCH","MCHC","RDW",
+        "Neutrophil","Lymphocyte","Monocyte","Eosinophil","Basophil",
+        "SpecificGravity","pH","Sugar (Urine)","Protein (Urine)","Ketone","Blood","Leukocytes","Nitrite",
+        "Glucose Fasting","HbA1C","Creatinine","eGFR","Sodium","Potassium","Chloride",
+        "Alk Phosphatase","ALT (SGPT)","Uric Acid","CPK-Total","Cholesterol","Triglycerides",
+        "HDL Cholesterol","LDL Cholesterol","Chol:HDL Ratio","NON-HDL Choleste",
+        "Fasting","TSH Ultra-sens","Vitamin B12","Ferritin",
+        "Anti-HBs","Anti-HCV","Anti-HAV",
+        "MicroalbuminRDMU","Urine Creatinine","MAL/Creat Ratio1"
       ],
+      
       results: {
         WBC: 6.9, RBC: 5.04, Hemoglobin: 151, Hematocrit: 0.449, "Platelet Count": 202,
         MCV: 89.1, MCH: 29.9, MCHC: 335, RDW: 12.7,
@@ -264,7 +283,6 @@ interface LabResult {
         Fasting: "-", "TSH Ultra-sens": "0.35-4.94", "Vitamin B12": "133-675", Ferritin: "30-300",
         "Anti-HBs": "-", "Anti-HCV": "-", "Anti-HAV": "-", MicroalbuminRDMU: "-", "Urine Creatinine": "-", "MAL/Creat Ratio1": "-"
       },
-      pdfUrl: "https://example.com/demo-navdeep-2021.pdf"
     }
      
     ],
