@@ -2,6 +2,11 @@
 
 A secure **Next.js** application that allows patients to view and download their medical test results, such as blood, urine, and other lab tests. Built with **Chakra UI** for a modern, accessible interface and **React PDF** for downloading results.
 
+<img width="1425" height="1125" alt="Screenshot 2026-02-13 at 9 11 46 PM" src="https://github.com/user-attachments/assets/96e07e46-61c9-408e-9b81-b036ec31a4f9" />
+<img width="1863" height="1157" alt="Screenshot 2026-02-13 at 9 12 19 PM" src="https://github.com/user-attachments/assets/31858432-42cd-40ef-a587-b233c0acf55c" />
+<img width="1860" height="1119" alt="Screenshot 2026-02-13 at 9 12 35 PM" src="https://github.com/user-attachments/assets/7712644f-7e1e-46d7-a19d-ff0529e869d1" />
+<img width="1865" height="1153" alt="Screenshot 2026-02-13 at 9 12 58 PM" src="https://github.com/user-attachments/assets/9b52c11c-788c-43c2-8d2e-87092e753652" />
+
 ---
 
 ## 🏗️ Technology Stack
