@@ -17,7 +17,7 @@ export const sections: Record<string, string[]> = {
       "Eosinophil",
       "Basophil",
     ],
-    URINALYSIS: [
+    "URINALYSIS": [
       "SpecificGravity",
       "pH",
       "Sugar (Urine)",
