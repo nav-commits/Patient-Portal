@@ -1,5 +1,5 @@
 export const sections: Record<string, string[]> = {
-    HEMATOLOGY: [
+    "HEMATOLOGY": [
       "WBC",
       "RBC",
       "Hemoglobin",

@@ -2,27 +2,22 @@
 
 import { useParams } from "next/navigation";
 import { patient1, Patient } from "@/data/patient";
-import { Box, Heading, Table } from "@chakra-ui/react";
-import { Chart, useChart } from "@chakra-ui/charts";
-import {
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
+import { Box, Heading, Text, VStack, Table, HStack } from "@chakra-ui/react";
 import { format } from "date-fns";
+import { Chart, useChart } from "@chakra-ui/charts";
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import { testDescriptions } from "@/lib/testDescription";
+import { AiOutlineInfoCircle } from "react-icons/ai"; 
 
 export default function TestPage() {
   const params = useParams();
   const patientId = params.patientId;
   const testName = params.testName ? decodeURIComponent(params.testName) : null;
 
-  if (!patientId || !testName) return <div>Missing parameters</div>;
+  if (!patientId || !testName) return <Box>Missing parameters</Box>;
 
   const patient: Patient | null = patient1.id === patientId ? patient1 : null;
-  if (!patient) return <div>Patient not found</div>;
+  if (!patient) return <Box>Patient not found</Box>;
 
   const testResults = patient.labResults
     .filter((lr) => testName in lr.results)
@@ -43,17 +38,37 @@ export default function TestPage() {
     data: chartData,
     series: [{ name: "value", color: "blue.solid" }],
   });
-  return (
-    <Box mt={10}>
-      <Heading size="xl" mb={4}>
-        {patient.name} – Showing your historical results for  {testName}
-      </Heading>
 
+  return (
+    <Box mt={10} px={4} maxW="5xl" mx="auto">
+      <VStack align="start">
+        <Heading size="xl">
+          {patient.name} – {testName} History
+        </Heading>
+        {testDescriptions[testName] && (
+          <HStack
+            bg="blue.50"
+            p={3}
+            rounded="md"
+            borderLeft="4px solid"
+            borderColor="blue.400"
+            w="full"
+            align="start"
+          >
+            <AiOutlineInfoCircle color="#3182ce" size={20} style={{ marginTop: 2 }} />
+            <Text fontSize="md" color="gray.700" lineHeight="tall">
+              {testDescriptions[testName]}
+            </Text>
+          </HStack>
+        )}
+      </VStack>
+
+      {/* Table */}
       {testResults.length === 0 ? (
-        <Box>No results found for this test.</Box>
+        <Box mt={6}>No results found for this test.</Box>
       ) : (
         <>
-          <Box mb={6}>
+          <Box mt={6}>
             <Table.Root size="md">
               <Table.Header>
                 <Table.Row>
@@ -75,40 +90,43 @@ export default function TestPage() {
               </Table.Body>
             </Table.Root>
           </Box>
-          <Chart.Root mt={12} maxH="md" chart={chart}>
-            <LineChart data={chart.data}>
-              <CartesianGrid stroke={chart.color("border")} vertical={false} />
-              <XAxis
-                dataKey={chart.key("date")}
-                axisLine={false}
-                tickLine={false}
-                stroke={chart.color("border")}
-                label={{ value: "Time", position: "bottom" }}
-              />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tickMargin={10}
-                stroke={chart.color("border")}
-                label={{ value: "Results", position: "left", angle: -90 }}
-              />
-              <Tooltip
-                animationDuration={100}
-                cursor={false}
-                content={<Chart.Tooltip />}
-              />
-              {chart.series.map((item) => (
-                <Line
-                  key={item.name}
-                  isAnimationActive={false}
-                  dataKey={chart.key(item.name)}
-                  stroke={chart.color(item.color)}
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
+
+          {/* Chart */}
+          <Box mt={8} borderWidth={1} borderRadius="lg" p={4}>
+            <Heading size="md" mb={4}>
+              Historical Trend
+            </Heading>
+            <Chart.Root mt={12} maxH="md" chart={chart}>
+              <LineChart data={chart.data}>
+                <CartesianGrid stroke={chart.color("border")} vertical={false} />
+                <XAxis
+                  dataKey={chart.key("date")}
+                  axisLine={false}
+                  tickLine={false}
+                  stroke={chart.color("border")}
+                  label={{ value: "Time", position: "bottom" }}
                 />
-              ))}
-            </LineChart>
-          </Chart.Root>
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tickMargin={10}
+                  stroke={chart.color("border")}
+                  label={{ value: "Results", position: "left", angle: -90 }}
+                />
+                <Tooltip animationDuration={100} cursor={false} content={<Chart.Tooltip />} />
+                {chart.series.map((item) => (
+                  <Line
+                    key={item.name}
+                    isAnimationActive={false}
+                    dataKey={chart.key(item.name)}
+                    stroke={chart.color(item.color)}
+                    strokeWidth={2}
+                    dot={{ r: 4 }}
+                  />
+                ))}
+              </LineChart>
+            </Chart.Root>
+          </Box>
         </>
       )}
     </Box>

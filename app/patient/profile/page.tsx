@@ -10,20 +10,14 @@ import {
   Avatar,
   Badge,
   SimpleGrid,
-  Tag,
 } from "@chakra-ui/react";
 import { patient1 } from "@/data/patient";
 
 export default function Profile() {
   const patient = patient1;
   const latestLabResult = patient.labResults[0];
-  const dob = new Date(patient.dob);
-  const age = Math.abs(
-    new Date(Date.now() - dob.getTime()).getUTCFullYear() - 1970
-  );
-
   const fields = [
-    { label: "Date of Birth", value: `${patient.dob} (Age ${age})` },
+    { label: "Date of Birth", value: `${patient.dob}` },
     { label: "Gender", value: patient.gender },
     { label: "Address", value: patient.address },
     { label: "Email", value: patient.email },
