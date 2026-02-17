@@ -1,5 +1,5 @@
 export const sections: Record<string, string[]> = {
-    HEMATOLOGY: [
+    "HEMATOLOGY": [
       "WBC",
       "RBC",
       "Hemoglobin",
@@ -17,7 +17,7 @@ export const sections: Record<string, string[]> = {
       "Eosinophil",
       "Basophil",
     ],
-    URINALYSIS: [
+    "URINALYSIS": [
       "SpecificGravity",
       "pH",
       "Sugar (Urine)",

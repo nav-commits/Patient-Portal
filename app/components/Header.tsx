@@ -24,11 +24,11 @@ export default function Header() {
       </Text>
       <Flex align="center" gap={3}>
         <Box textAlign="right">
-          <Text fontSize="sm" fontWeight="semibold" color="white">
-            Navdeep Dhamrait
-          </Text>
           <Text fontSize="xs" color="blue.200">
             Patient
+          </Text>
+          <Text fontSize="sm" fontWeight="semibold" color="white">
+            Navdeep Dhamrait
           </Text>
         </Box>
         <Avatar.Root size="sm">

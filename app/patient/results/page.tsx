@@ -17,7 +17,7 @@ import { FiBarChart2 } from "react-icons/fi";
 import { patient1 } from "@/data/patient";
 import { useMemo, useState } from "react";
 import { sections } from "@/lib/section";
-import { getStatus, getStatusColor, Status } from "@/lib/status";
+import { getStatus, Status, getStatusColor } from "@/lib/status";
 import { DownloadPDFButton } from "@/app/components/DownloadPDFButton";
 export default function Results() {
   const router = useRouter();
@@ -134,28 +134,50 @@ export default function Results() {
               {tests.map((test) => {
                 const value = selectedResult?.results[test];
                 const range = selectedResult?.referenceRanges[test];
+                const numericValue =
+                  typeof value === "number" ? value : Number(value);
                 const status: Status =
-                  value !== undefined && range
-                    ? getStatus(Number(value), range)
+                  range && !isNaN(numericValue)
+                    ? getStatus(numericValue, range)
                     : Status.Normal;
                 return (
-                  <Table.Row key={test}>
-                    <Table.Cell>{test}</Table.Cell>
+                  <Table.Row
+                    key={test}
+                    bg={
+                      status === Status.High
+                        ? "red.50"
+                        : status === Status.Low
+                        ? "blue.50"
+                        : status === Status.Borderline
+                        ? "yellow.50"
+                        : "transparent"
+                    }
+                  >
+                    <Table.Cell
+                      fontWeight={
+                        status !== Status.Normal ? "semibold" : "normal"
+                      }
+                    >
+                      {test}
+                    </Table.Cell>
                     <Table.Cell>{value ?? "—"}</Table.Cell>
                     <Table.Cell>
                       {selectedResult?.units[test] ?? "—"}
                     </Table.Cell>
                     <Table.Cell>{range ?? "—"}</Table.Cell>
                     <Table.Cell>
-                      <Badge colorPalette={getStatusColor(status)}>
+                      <Badge
+                        colorPalette={getStatusColor(status)}
+                        variant={status === Status.Normal ? "subtle" : "solid"}
+                      >
                         {status}
                       </Badge>
                     </Table.Cell>
                     <Table.Cell>
                       <Icon
                         as={FiBarChart2}
-                        w={5}
-                        h={5}
+                        w={7}
+                        h={10}
                         cursor="pointer"
                         color="teal.500"
                         _hover={{ color: "teal.700" }}
