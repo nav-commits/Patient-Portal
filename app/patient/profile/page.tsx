@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Flex,
   Box,
@@ -10,14 +11,61 @@ import {
   Avatar,
   Badge,
   SimpleGrid,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
-import { patient1 } from "@/data/patient";
+import { useEffect, useState } from "react";
+import { db } from "@/lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { Patient } from "@/types/patient.types";
 
 export default function Profile() {
-  const patient = patient1;
-  const latestLabResult = patient.labResults[0];
+  const [patient, setPatient] = useState<Patient | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPatient = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "patients"));
+
+        if (!snapshot.empty) {
+          const docSnap = snapshot.docs[0];
+          const data = docSnap.data() as Patient;
+          data.id = docSnap.id;
+          setPatient(data);
+        }
+      } catch (error) {
+        console.error("Error fetching patient:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPatient();
+  }, []);
+
+  // Loading State
+  if (loading)
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" color="blue.500" />
+      </Center>
+    );
+
+  // Not Found State
+  if (!patient)
+    return (
+      <Center h="100vh">
+        <Text fontSize="xl" color="red.500">
+          Patient not found.
+        </Text>
+      </Center>
+    );
+
+  const latestLabResult = patient.labResults?.[0];
+
   const fields = [
-    { label: "Date of Birth", value: `${patient.dob}` },
+    { label: "Date of Birth", value: patient.dob },
     { label: "Gender", value: patient.gender },
     { label: "Address", value: patient.address },
     { label: "Email", value: patient.email },
@@ -33,8 +81,8 @@ export default function Profile() {
           })
         : "N/A",
     },
-    { label: "Medicare", value: patient.insurance.medicare },
-    { label: "Medicaid", value: patient.insurance.medicaid },
+    { label: "Medicare", value: patient.insurance?.medicare ?? "N/A" },
+    { label: "Medicaid", value: patient.insurance?.medicaid ?? "N/A" },
   ];
 
   return (
@@ -42,6 +90,7 @@ export default function Profile() {
       <Heading size="2xl" mb={8} textAlign="center">
         Personal Info
       </Heading>
+
       <Flex justify="center">
         <Card.Root
           maxW="700px"
@@ -53,7 +102,7 @@ export default function Profile() {
           <Card.Header py={6}>
             <Flex align="center" gap={4}>
               <Avatar.Root>
-                <Avatar.Fallback name="Navdeep Dhamrait" />
+                <Avatar.Fallback name={patient.name} />
               </Avatar.Root>
               <Box>
                 <Heading size="md">{patient.name}</Heading>
@@ -63,10 +112,12 @@ export default function Profile() {
               </Box>
             </Flex>
           </Card.Header>
+
           <Card.Body py={6}>
             <Stack>
               <Separator />
-              <SimpleGrid columns={{ base: 1, md: 2 }}>
+
+              <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
                 {fields.map((field, idx) => (
                   <Box
                     key={idx}
@@ -82,7 +133,9 @@ export default function Profile() {
                   </Box>
                 ))}
               </SimpleGrid>
+
               <Separator />
+
               <Text fontSize="xs" color="gray.500" textAlign="center">
                 If any information is incorrect, please contact the doctor’s
                 office and/or laboratory.

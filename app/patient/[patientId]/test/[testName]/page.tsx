@@ -1,37 +1,93 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { patient1, Patient } from "@/data/patient";
-import { Box, Heading, Text, VStack, Table, HStack } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import {
+  Box,
+  Heading,
+  Text,
+  VStack,
+  Table,
+  HStack,
+  Spinner,
+  Center,
+} from "@chakra-ui/react";
 import { format } from "date-fns";
 import { Chart, useChart } from "@chakra-ui/charts";
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import {
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "recharts";
 import { testDescriptions } from "@/lib/testDescription";
-import { AiOutlineInfoCircle } from "react-icons/ai"; 
+import { AiOutlineInfoCircle } from "react-icons/ai";
+import { db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { Patient } from "@/types/patient.types";
 
 export default function TestPage() {
   const params = useParams();
-  const patientId = params.patientId;
-  const testName = params.testName ? decodeURIComponent(params.testName) : null;
+  const patientId = params.patientId as string | undefined;
+  const testName = params.testName
+    ? decodeURIComponent(params.testName as string)
+    : undefined;
 
-  if (!patientId || !testName) return <Box>Missing parameters</Box>;
+  const [patient, setPatient] = useState<Patient | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const patient: Patient | null = patient1.id === patientId ? patient1 : null;
-  if (!patient) return <Box>Patient not found</Box>;
 
-  const testResults = patient.labResults
-    .filter((lr) => testName in lr.results)
-    .map((lr) => ({
-      date: format(new Date(lr.date), "MMMM d, yyyy h:mm a"),
-      result: lr.results[testName],
-      unit: lr.units[testName] || "—",
-      referenceRange: lr.referenceRanges[testName] || "—",
-    }))
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  useEffect(() => {
+    if (!patientId) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchPatient = async () => {
+      try {
+        const ref = doc(db, "patients", patientId);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          setPatient(snap.data() as Patient);
+        } else {
+          setPatient(null);
+        }
+      } catch (error) {
+        console.error("Error fetching patient:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPatient();
+  }, [patientId]);
+
+
+  const labResults = patient?.labResults ?? [];
+
+  const testResults =
+    testName && patient
+      ? labResults
+          .filter((lr) => testName in lr.results)
+          .map((lr) => ({
+            rawDate: lr.date,
+            date: format(new Date(lr.date), "MMMM d, yyyy h:mm a"),
+            result: lr.results[testName],
+            unit: lr.units[testName] || "—",
+            referenceRange: lr.referenceRanges[testName] || "—",
+          }))
+          .sort(
+            (a, b) =>
+              new Date(a.rawDate).getTime() -
+              new Date(b.rawDate).getTime()
+          )
+      : [];
 
   const chartData = testResults.map((r) => ({
     value: Number(r.result),
-    date: format(new Date(r.date), "MMM yyyy"),
+    date: format(new Date(r.rawDate), "MMM yyyy"),
   }));
 
   const chart = useChart({
@@ -39,12 +95,36 @@ export default function TestPage() {
     series: [{ name: "value", color: "blue.solid" }],
   });
 
+
+  if (loading)
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" color="blue.500" />
+      </Center>
+    );
+
+  if (!patientId || !testName)
+    return (
+      <Center h="100vh">
+        <Text>Missing parameters</Text>
+      </Center>
+    );
+
+  if (!patient)
+    return (
+      <Center h="100vh">
+        <Text color="red.500">Patient not found</Text>
+      </Center>
+    );
+
+
   return (
     <Box mt={10} px={4} maxW="5xl" mx="auto">
       <VStack align="start">
         <Heading size="xl">
           {patient.name} – {testName} History
         </Heading>
+
         {testDescriptions[testName] && (
           <HStack
             bg="blue.50"
@@ -55,7 +135,7 @@ export default function TestPage() {
             w="full"
             align="start"
           >
-            <AiOutlineInfoCircle color="#3182ce" size={20} style={{ marginTop: 2 }} />
+            <AiOutlineInfoCircle size={20} color="#3182ce" />
             <Text fontSize="md" color="gray.700" lineHeight="tall">
               {testDescriptions[testName]}
             </Text>
@@ -63,7 +143,6 @@ export default function TestPage() {
         )}
       </VStack>
 
-      {/* Table */}
       {testResults.length === 0 ? (
         <Box mt={6}>No results found for this test.</Box>
       ) : (
@@ -91,11 +170,11 @@ export default function TestPage() {
             </Table.Root>
           </Box>
 
-          {/* Chart */}
           <Box mt={8} borderWidth={1} borderRadius="lg" p={4}>
             <Heading size="md" mb={4}>
               Historical Trend
             </Heading>
+
             <Chart.Root mt={12} maxH="md" chart={chart}>
               <LineChart data={chart.data}>
                 <CartesianGrid stroke={chart.color("border")} vertical={false} />
@@ -104,16 +183,18 @@ export default function TestPage() {
                   axisLine={false}
                   tickLine={false}
                   stroke={chart.color("border")}
-                  label={{ value: "Time", position: "bottom" }}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
                   tickMargin={10}
                   stroke={chart.color("border")}
-                  label={{ value: "Results", position: "left", angle: -90 }}
                 />
-                <Tooltip animationDuration={100} cursor={false} content={<Chart.Tooltip />} />
+                <Tooltip
+                  animationDuration={100}
+                  cursor={false}
+                  content={<Chart.Tooltip />}
+                />
                 {chart.series.map((item) => (
                   <Line
                     key={item.name}
