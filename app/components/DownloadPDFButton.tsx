@@ -17,7 +17,7 @@ export const DownloadPDFButton: React.FC<Props> = ({ patient, labResult }) => {
         document={<LabReportPDF patient={patient} labResult={labResult} />}
         fileName={`${patient.name}-LabResults.pdf`}
       >
-        {() => <Button>Download Report</Button>}
+        {() => <Button bg="blue.900">Download Report</Button>}
       </PDFDownloadLink>
     </Box>
   );

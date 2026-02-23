@@ -109,7 +109,6 @@ export default function AuthPage() {
           { merge: true }
         );
       }
-
       router.push("/patient/results");
     } catch (err: unknown) {
       if (err instanceof Error) {

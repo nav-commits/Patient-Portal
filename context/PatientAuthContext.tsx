@@ -14,7 +14,6 @@ import { useRouter } from "next/navigation";
 import { Spinner, Center, VStack, Text } from "@chakra-ui/react";
 import { LabResult } from "@/types/patient.types"; 
 
-// Extended Patient type
 export interface Patient {
   uid: string;
   email: string | null;

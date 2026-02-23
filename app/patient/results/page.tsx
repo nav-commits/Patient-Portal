@@ -25,7 +25,6 @@ import { usePatientAuth } from "@/context/PatientAuthContext";
 export default function Results() {
   const router = useRouter();
   const { patient, loading } = usePatientAuth();
-
   const labResults = patient?.labResults ?? [];
   const years = Array.from(
     new Set(labResults.map((r) => new Date(r.date).getFullYear()))
@@ -77,25 +76,6 @@ export default function Results() {
       <Heading size="2xl" mb={6}>
         {patient.patientName}'s Lab Results
       </Heading>
-
-      {selectedResult && (
-        <DownloadPDFButton
-          patient={{
-            id: patient.patientId,
-            name: patient.patientName || "",
-            dob: patient.dob,
-            gender: patient.gender,
-            email: patient.email || "",
-            phone: patient.phone,
-            address: patient.address,
-            primaryCarePhysician: patient.primaryCarePhysician,
-            insurance: patient.insurance,
-            labResults: patient.labResults,
-          }}
-          labResult={selectedResult}
-        />
-      )}
-
       {/* Year Filter */}
       {years.length > 0 && (
         <Box mb={4}>
@@ -131,7 +111,23 @@ export default function Results() {
           </Select.Root>
         </Box>
       )}
-
+      {selectedResult && (
+        <DownloadPDFButton
+          patient={{
+            id: patient.patientId,
+            name: patient.patientName || "",
+            dob: patient.dob,
+            gender: patient.gender,
+            email: patient.email || "",
+            phone: patient.phone,
+            address: patient.address,
+            primaryCarePhysician: patient.primaryCarePhysician,
+            insurance: patient.insurance,
+            labResults: patient.labResults,
+          }}
+          labResult={selectedResult}
+        />
+      )}
       {selectedResult && (
         <Text mb={4}>
           Specimen Collected:{" "}
