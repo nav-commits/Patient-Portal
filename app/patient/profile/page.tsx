@@ -13,46 +13,25 @@ import {
   SimpleGrid,
   Spinner,
   Center,
+  VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
-import { Patient } from "@/types/patient.types";
+import { usePatientAuth } from "@/context/PatientAuthContext";
 
 export default function Profile() {
-  const [patient, setPatient] = useState<Patient | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { patient, loading } = usePatientAuth();
 
-  useEffect(() => {
-    const fetchPatient = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "patients"));
-
-        if (!snapshot.empty) {
-          const docSnap = snapshot.docs[0];
-          const data = docSnap.data() as Patient;
-          data.id = docSnap.id;
-          setPatient(data);
-        }
-      } catch (error) {
-        console.error("Error fetching patient:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPatient();
-  }, []);
-
-  // Loading State
   if (loading)
     return (
       <Center h="100vh">
-        <Spinner size="xl" color="blue.500" />
+        <VStack>
+          <Spinner size="xl" color="blue.500" />
+          <Text fontSize="md" color="gray.600">
+            Loading your personal info...
+          </Text>
+        </VStack>
       </Center>
     );
 
-  // Not Found State
   if (!patient)
     return (
       <Center h="100vh">
@@ -68,7 +47,7 @@ export default function Profile() {
     { label: "Date of Birth", value: patient.dob },
     { label: "Gender", value: patient.gender },
     { label: "Address", value: patient.address },
-    { label: "Email", value: patient.email },
+    { label: "Email", value: patient.email ?? "N/A" },
     { label: "Phone Number", value: patient.phone },
     { label: "Primary Care Physician", value: patient.primaryCarePhysician },
     {
@@ -92,20 +71,14 @@ export default function Profile() {
       </Heading>
 
       <Flex justify="center">
-        <Card.Root
-          maxW="700px"
-          w="100%"
-          shadow="lg"
-          borderRadius="xl"
-          bg="white"
-        >
+        <Card.Root maxW="700px" w="100%" shadow="lg" borderRadius="xl" bg="white">
           <Card.Header py={6}>
             <Flex align="center" gap={4}>
               <Avatar.Root>
-                <Avatar.Fallback name={patient.name} />
+                <Avatar.Fallback name={patient.patientName ?? "Patient"} />
               </Avatar.Root>
               <Box>
-                <Heading size="md">{patient.name}</Heading>
+                <Heading size="md">{patient.patientName ?? "Patient"}</Heading>
                 <Badge colorScheme="teal" mt={1}>
                   Personal Details
                 </Badge>
@@ -137,8 +110,7 @@ export default function Profile() {
               <Separator />
 
               <Text fontSize="xs" color="gray.500" textAlign="center">
-                If any information is incorrect, please contact the doctor’s
-                office and/or laboratory.
+                If any information is incorrect, please contact the doctor’s office and/or laboratory.
               </Text>
             </Stack>
           </Card.Body>
