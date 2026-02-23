@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
-import { Patient, LabResult } from "@/data/patient";
+import { Patient, LabResult } from "@/types/patient.types";
 import { sections } from "../../lib/section";
 import { Status, getStatus } from "@/lib/status";
 
