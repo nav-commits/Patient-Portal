@@ -124,7 +124,7 @@ export function PatientAuthProvider({ children }: PatientAuthProviderProps) {
           <VStack>
             <Spinner size="xl" color="blue.500" />
             <Text fontSize="md" color="gray.600">
-              Loading your health records...
+              Loading...
             </Text>
           </VStack>
         </Center>
