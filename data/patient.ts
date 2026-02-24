@@ -1,6 +1,6 @@
 import { Patient } from "@/types/patient.types";
   
-  const ORDERED_ITEMS = [
+  export const ORDERED_ITEMS = [
     "WBC","RBC","Hemoglobin","Hematocrit","Platelet Count","MCV","MCH","MCHC","RDW",
     "Neutrophil","Lymphocyte","Monocyte","Eosinophil","Basophil",
     "SpecificGravity","pH","Sugar (Urine)","Protein (Urine)","Ketone","Blood","Leukocytes","Nitrite",
@@ -10,7 +10,7 @@ import { Patient } from "@/types/patient.types";
     "MAL/Creat Ratio1","MAL/Creat Ratio2","Anti-HBs","Anti-HCV","Anti-HAV","CPK-Total"
   ].filter(Boolean); 
   
-  const UNITS: Record<string, string> = {
+  export const UNITS: Record<string, string> = {
     WBC: "10**9/L", RBC: "10**12/L", Hemoglobin: "g/L", Hematocrit: "L/L", "Platelet Count": "10**9/L",
     MCV: "fL", MCH: "pg", MCHC: "g/L", RDW: "%",
     Neutrophil: "10**9/L", Lymphocyte: "10**9/L", Monocyte: "10**9/L", Eosinophil: "10**9/L", Basophil: "10**9/L",
@@ -25,7 +25,7 @@ import { Patient } from "@/types/patient.types";
     "Anti-HBs": "mIU/mL", "Anti-HCV": "N/A", "Anti-HAV": "N/A", "CPK-Total": "U/L"
   };
   
-  const REFERENCE_RANGES: Record<string, string> = {
+  export const REFERENCE_RANGES: Record<string, string> = {
     WBC: "4.0-11.0", RBC: "4.7-6.0", Hemoglobin: "140-180", Hematocrit: "0.40-0.54", "Platelet Count": "150-400",
     MCV: "80-98", MCH: "27.5-32.5", MCHC: "320-360", RDW: "11.5-14.5",
     Neutrophil: "2.0-7.5", Lymphocyte: "1.0-3.5", Monocyte: "0.0-0.8", Eosinophil: "0.0-0.5", Basophil: "0.0-0.2",
