@@ -26,6 +26,8 @@ export default function Results() {
   const router = useRouter();
   const { patient, loading } = usePatientAuth();
   const labResults = patient?.labResults ?? [];
+
+  // Get all unique years from lab results
   const years = Array.from(
     new Set(labResults.map((r) => new Date(r.date).getFullYear()))
   ).sort((a, b) => b - a);
@@ -41,11 +43,12 @@ export default function Results() {
     })),
   });
 
-  const selectedResult =
+  // Filter all results for the selected year, newest first
+  const selectedResults =
     selectedYear &&
-    labResults.find(
-      (r) => new Date(r.date).getFullYear().toString() === selectedYear
-    );
+    labResults
+      .filter((r) => new Date(r.date).getFullYear().toString() === selectedYear)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const handleGraphClick = (test: string) => {
     router.push(
@@ -76,6 +79,7 @@ export default function Results() {
       <Heading size="2xl" mb={6}>
         {patient.patientName}'s Lab Results
       </Heading>
+
       {/* Year Filter */}
       {years.length > 0 && (
         <Box mb={4}>
@@ -111,97 +115,97 @@ export default function Results() {
           </Select.Root>
         </Box>
       )}
-      {selectedResult && (
-        <DownloadPDFButton
-          patient={{
-            id: patient.patientId,
-            name: patient.patientName || "",
-            dob: patient.dob,
-            gender: patient.gender,
-            email: patient.email || "",
-            phone: patient.phone,
-            address: patient.address,
-            primaryCarePhysician: patient.primaryCarePhysician,
-            insurance: patient.insurance,
-            labResults: patient.labResults,
-          }}
-          labResult={selectedResult}
-        />
-      )}
-      {selectedResult && (
-        <Text mb={4}>
-          Specimen Collected:{" "}
-          {format(new Date(selectedResult.date), "MMM dd, yyyy hh:mm a")}
-        </Text>
-      )}
+
+      {selectedResults?.map((result, idx) => (
+        <Box key={idx} mb={6} p={4} borderWidth="1px" borderRadius="md">
+          {/* PDF Download Button */}
+          <DownloadPDFButton
+            patient={{
+              id: patient.patientId,
+              name: patient.patientName || "",
+              dob: patient.dob,
+              gender: patient.gender,
+              email: patient.email || "",
+              phone: patient.phone,
+              address: patient.address,
+              primaryCarePhysician: patient.primaryCarePhysician,
+              insurance: patient.insurance,
+              labResults: patient.labResults,
+            }}
+            labResult={result}
+          />
+
+          <Text mb={2}>
+            Specimen Collected:{" "}
+            {format(new Date(result.date), "MMM dd, yyyy hh:mm a")}
+          </Text>
+
+          {Object.entries(sections).map(([sectionName, tests]) => (
+            <Box key={sectionName} mb={4}>
+              <Heading size="sm" mb={2}>
+                {sectionName}
+              </Heading>
+              <Table.Root size="sm">
+                <Table.Header>
+                  <Table.Row>
+                    <Table.ColumnHeader>Test</Table.ColumnHeader>
+                    <Table.ColumnHeader>Result</Table.ColumnHeader>
+                    <Table.ColumnHeader>Units</Table.ColumnHeader>
+                    <Table.ColumnHeader>Reference Range</Table.ColumnHeader>
+                    <Table.ColumnHeader>Status</Table.ColumnHeader>
+                    <Table.ColumnHeader>Graph past results</Table.ColumnHeader>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {tests.map((test) => {
+                    const value = result?.results?.[test];
+                    const range = result?.referenceRanges?.[test];
+                    const numericValue =
+                      typeof value === "number" ? value : Number(value);
+                    const status: Status =
+                      range && !isNaN(numericValue)
+                        ? getStatus(numericValue, range)
+                        : Status.Normal;
+
+                    return (
+                      <Table.Row key={test}>
+                        <Table.Cell>{test}</Table.Cell>
+                        <Table.Cell>{value ?? "—"}</Table.Cell>
+                        <Table.Cell>{result?.units?.[test] ?? "—"}</Table.Cell>
+                        <Table.Cell>{range ?? "—"}</Table.Cell>
+                        <Table.Cell>
+                          <Badge
+                            colorPalette={getStatusColor(status)}
+                            variant={
+                              status === Status.Normal ? "subtle" : "solid"
+                            }
+                          >
+                            {status}
+                          </Badge>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <Icon
+                            as={FiBarChart2}
+                            cursor="pointer"
+                            color="teal.500"
+                            _hover={{ color: "teal.700" }}
+                            onClick={() => handleGraphClick(test)}
+                          />
+                        </Table.Cell>
+                      </Table.Row>
+                    );
+                  })}
+                </Table.Body>
+              </Table.Root>
+            </Box>
+          ))}
+        </Box>
+      ))}
 
       <Text mb={4}>
         Have additional questions concerning your results? Please consult your
         doctor.
       </Text>
-
-      {/* Results Table */}
-      {Object.entries(sections).map(([sectionName, tests]) => (
-        <Box key={sectionName} mb={6}>
-          <Heading size="md" mb={2}>
-            {sectionName}
-          </Heading>
-
-          <Table.Root size="sm">
-            <Table.Header>
-              <Table.Row>
-                <Table.ColumnHeader>Test</Table.ColumnHeader>
-                <Table.ColumnHeader>Result</Table.ColumnHeader>
-                <Table.ColumnHeader>Units</Table.ColumnHeader>
-                <Table.ColumnHeader>Reference Range</Table.ColumnHeader>
-                <Table.ColumnHeader>Status</Table.ColumnHeader>
-                <Table.ColumnHeader>Graph past results</Table.ColumnHeader>
-              </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-              {tests.map((test) => {
-                const value = selectedResult?.results?.[test];
-                const range = selectedResult?.referenceRanges?.[test];
-                const numericValue =
-                  typeof value === "number" ? value : Number(value);
-                const status: Status =
-                  range && !isNaN(numericValue)
-                    ? getStatus(numericValue, range)
-                    : Status.Normal;
-
-                return (
-                  <Table.Row key={test}>
-                    <Table.Cell>{test}</Table.Cell>
-                    <Table.Cell>{value ?? "—"}</Table.Cell>
-                    <Table.Cell>
-                      {selectedResult?.units?.[test] ?? "—"}
-                    </Table.Cell>
-                    <Table.Cell>{range ?? "—"}</Table.Cell>
-                    <Table.Cell>
-                      <Badge
-                        colorPalette={getStatusColor(status)}
-                        variant={status === Status.Normal ? "subtle" : "solid"}
-                      >
-                        {status}
-                      </Badge>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Icon
-                        as={FiBarChart2}
-                        cursor="pointer"
-                        color="teal.500"
-                        _hover={{ color: "teal.700" }}
-                        onClick={() => handleGraphClick(test)}
-                      />
-                    </Table.Cell>
-                  </Table.Row>
-                );
-              })}
-            </Table.Body>
-          </Table.Root>
-        </Box>
-      ))}
     </Box>
   );
 }
