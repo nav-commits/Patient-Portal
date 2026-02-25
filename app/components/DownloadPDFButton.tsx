@@ -4,7 +4,7 @@
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Button, Box } from "@chakra-ui/react";
 import { LabReportPDF } from "./LabReport";
-import { Patient, LabResult } from "@/types/patient.types";
+import { Patient, LabResult } from "@/context/PatientAuthContext";
 interface Props {
   patient: Patient;
   labResult: LabResult;

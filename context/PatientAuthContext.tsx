@@ -12,7 +12,14 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { Spinner, Center, VStack, Text } from "@chakra-ui/react";
-import { LabResult } from "@/types/patient.types"; 
+
+export interface LabResult {
+  date: string;
+  orderedItems: string[];
+  results: Record<string, number | string>;
+  units: Record<string, string>;
+  referenceRanges: Record<string, string>;
+}
 
 export interface Patient {
   uid: string;
