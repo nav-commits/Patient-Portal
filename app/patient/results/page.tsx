@@ -130,7 +130,8 @@ export default function Results() {
             {/* PDF Download Button */}
             <DownloadPDFButton
               patient={{
-                id: patient.patientId,
+                uid: patient.uid,
+                patientId: patient.patientId,
                 name: patient.name || "",
                 dob: patient.dob,
                 gender: patient.gender,
