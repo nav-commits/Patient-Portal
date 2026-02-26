@@ -13,6 +13,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { Spinner, Center, VStack, Text } from "@chakra-ui/react";
 
+// -------------------- Types --------------------
 export interface LabResult {
   date: string;
   orderedItems: string[];
@@ -52,6 +53,45 @@ export function usePatientAuth() {
   return useContext(PatientAuthContext);
 }
 
+// -------------------- Fetch Patient --------------------
+async function fetchPatientData(user: User): Promise<Patient | null> {
+  const userDocRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userDocRef);
+  const userData = userSnap.data();
+
+  if (!userData?.patientId) return null;
+
+  const patientDocRef = doc(db, "patients", userData.patientId);
+  const patientSnap = await getDoc(patientDocRef);
+  if (!patientSnap.exists()) return null;
+
+  const patientData = patientSnap.data();
+  const patient: Patient = {
+    uid: user.uid,
+    email: user.email,
+    patientId: userData.patientId,
+    patientName: patientData.name || userData.name || null,
+    dob: patientData.dob || "",
+    gender: patientData.gender || "",
+    phone: patientData.phone || "",
+    address: patientData.address || "",
+    primaryCarePhysician: patientData.primaryCarePhysician || "",
+    insurance: {
+      medicare: patientData.insurance?.medicare || "",
+      medicaid: patientData.insurance?.medicaid || "",
+    },
+    labResults: patientData.labResults || [],
+  };
+
+  // Only update user name if missing
+  if (!userData.name && patient.patientName) {
+    await setDoc(userDocRef, { name: patient.patientName }, { merge: true });
+  }
+
+  return patient;
+}
+
+// -------------------- Provider --------------------
 interface PatientAuthProviderProps {
   children: ReactNode;
 }
@@ -62,59 +102,20 @@ export function PatientAuthProvider({ children }: PatientAuthProviderProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         router.push("/login");
         return;
       }
-
       try {
-        const userDocRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userDocRef);
-
-        if (!userSnap.exists() || !userSnap.data()?.patientId) {
+        const patientData = await fetchPatientData(user);
+        if (!patientData) {
           router.push("/login");
           return;
         }
-
-        const patientId = userSnap.data().patientId;
-
-        // Fetch full patient info from "patients" collection
-        const patientDocRef = doc(db, "patients", patientId);
-        const patientDocSnap = await getDoc(patientDocRef);
-
-        if (!patientDocSnap.exists()) {
-          router.push("/login");
-          return;
-        }
-
-        const patientDataFromDB = patientDocSnap.data();
-
-        const patientData: Patient = {
-          uid: user.uid,
-          email: user.email,
-          patientId,
-          patientName: patientDataFromDB.name || userSnap.data().name || null,
-          dob: patientDataFromDB.dob || "",
-          gender: patientDataFromDB.gender || "",
-          phone: patientDataFromDB.phone || "",
-          address: patientDataFromDB.address || "",
-          primaryCarePhysician: patientDataFromDB.primaryCarePhysician || "",
-          insurance: {
-            medicare: patientDataFromDB.insurance?.medicare || "",
-            medicaid: patientDataFromDB.insurance?.medicaid || "",
-          },
-          labResults: patientDataFromDB.labResults || [],
-        };
-
-        // Update user doc with patientName if missing
-        if (!userSnap.data().name && patientData.patientName) {
-          await setDoc(userDocRef, { name: patientData.patientName }, { merge: true });
-        }
-
         setPatient(patientData);
       } catch (err) {
-        console.error("Error fetching patient data", err);
+        console.error("Failed to fetch patient data:", err);
         router.push("/login");
       } finally {
         setLoading(false);
