@@ -75,10 +75,10 @@ export default function Profile() {
           <Card.Header py={6}>
             <Flex align="center" gap={4}>
               <Avatar.Root>
-                <Avatar.Fallback name={patient.patientName ?? "Patient"} />
+                <Avatar.Fallback name={patient.name ?? "Patient"} />
               </Avatar.Root>
               <Box>
-                <Heading size="md">{patient.patientName ?? "Patient"}</Heading>
+                <Heading size="md">{patient.name ?? "Patient"}</Heading>
                 <Badge colorScheme="teal" mt={1}>
                   Personal Details
                 </Badge>
