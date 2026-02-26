@@ -86,7 +86,7 @@ export default function TestPage() {
       {/* Top bar: Heading + Back button */}
       <HStack justify="space-between" mb={4}>
         <Heading size="xl">
-          {patient.patientName} – {testName} History
+          {patient.name} – {testName} History
         </Heading>
         <Button
           bg="blue.900"

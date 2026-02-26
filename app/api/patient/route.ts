@@ -32,7 +32,7 @@ export async function GET(req: Request) {
       uid,
       email,
       patientId: userData.patientId,
-      patientName: patientData.name || userData.name || null,
+      name: patientData.name || userData.name || null,
       dob: patientData.dob || "",
       gender: patientData.gender || "",
       phone: patientData.phone || "",

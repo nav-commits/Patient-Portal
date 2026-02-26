@@ -100,6 +100,7 @@ export function PatientAuthProvider({ children }: PatientAuthProviderProps) {
 
     return () => unsubscribe();
   }, [router]);
+  console.log(patient)
   return (
     <PatientAuthContext.Provider value={{ patient, loading }}>
       {loading ? (

@@ -80,7 +80,7 @@ export default function Results() {
   return (
     <Box p={4}>
       <Heading size="2xl" mb={6}>
-        {patient.patientName}'s Lab Results
+        {patient.name}'s Lab Results
       </Heading>
 
       {/* Year Filter */}
@@ -131,7 +131,7 @@ export default function Results() {
             <DownloadPDFButton
               patient={{
                 id: patient.patientId,
-                name: patient.patientName || "",
+                name: patient.name || "",
                 dob: patient.dob,
                 gender: patient.gender,
                 email: patient.email || "",
