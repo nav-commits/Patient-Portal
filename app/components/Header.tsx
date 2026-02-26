@@ -44,12 +44,12 @@ export default function Header() {
             Patient
           </Text>
           <Text fontSize="sm" fontWeight="semibold" color="white">
-            {patient?.patientName || "Unknown"} 
+            {patient?.name || "Unknown"} 
           </Text>
         </Box>
 
         <Avatar.Root size="sm">
-          <Avatar.Fallback name={patient?.patientName || "Unknown"} />
+          <Avatar.Fallback name={patient?.name || "Unknown"} />
         </Avatar.Root>
 
         <Menu.Root>
