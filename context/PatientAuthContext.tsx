@@ -7,9 +7,9 @@ import {
   useState,
   ReactNode,
 } from "react";
-import { auth, db } from "@/lib/firebase";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {User } from "firebase/auth";
+import {auth} from '../lib/firebase'
+import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { Spinner, Center, VStack, Text } from "@chakra-ui/react";
 
@@ -53,42 +53,18 @@ export function usePatientAuth() {
   return useContext(PatientAuthContext);
 }
 
-// -------------------- Fetch Patient --------------------
 async function fetchPatientData(user: User): Promise<Patient | null> {
-  const userDocRef = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userDocRef);
-  const userData = userSnap.data();
-
-  if (!userData?.patientId) return null;
-
-  const patientDocRef = doc(db, "patients", userData.patientId);
-  const patientSnap = await getDoc(patientDocRef);
-  if (!patientSnap.exists()) return null;
-
-  const patientData = patientSnap.data();
-  const patient: Patient = {
-    uid: user.uid,
-    email: user.email,
-    patientId: userData.patientId,
-    patientName: patientData.name || userData.name || null,
-    dob: patientData.dob || "",
-    gender: patientData.gender || "",
-    phone: patientData.phone || "",
-    address: patientData.address || "",
-    primaryCarePhysician: patientData.primaryCarePhysician || "",
-    insurance: {
-      medicare: patientData.insurance?.medicare || "",
-      medicaid: patientData.insurance?.medicaid || "",
+  const token = await user.getIdToken();
+  const res = await fetch("/api/patient", {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token}`,
     },
-    labResults: patientData.labResults || [],
-  };
+  });
 
-  // Only update user name if missing
-  if (!userData.name && patient.patientName) {
-    await setDoc(userDocRef, { name: patient.patientName }, { merge: true });
-  }
-
-  return patient;
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Failed to fetch patient data");
+  return data.patient as Patient;
 }
 
 // -------------------- Provider --------------------
@@ -124,7 +100,6 @@ export function PatientAuthProvider({ children }: PatientAuthProviderProps) {
 
     return () => unsubscribe();
   }, [router]);
-
   return (
     <PatientAuthContext.Provider value={{ patient, loading }}>
       {loading ? (
