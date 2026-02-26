@@ -26,7 +26,7 @@ export interface Patient {
   uid: string;
   email: string | null;
   patientId: string;
-  patientName: string | null;
+  name: string | null;
   dob: string;
   gender: string;
   phone: string;
