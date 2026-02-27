@@ -13,6 +13,9 @@ import {
   Spinner,
   Text,
   VStack,
+  useBreakpointValue,
+  Flex,
+  Card,
 } from "@chakra-ui/react";
 import { format } from "date-fns";
 import { useState } from "react";
@@ -28,7 +31,9 @@ export default function Results() {
   const { patient, loading } = usePatientAuth();
   const labResults = patient?.labResults ?? [];
 
-  // Get all unique years from labResults
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
+  // Get unique years
   const years = Array.from(
     new Set(labResults.map((r) => new Date(r.date).getFullYear()))
   ).sort((a, b) => b - a);
@@ -44,7 +49,6 @@ export default function Results() {
     })),
   });
 
-  // Filter all results for the selected year
   const selectedResults = selectedYear
     ? labResults
         .filter(
@@ -78,14 +82,14 @@ export default function Results() {
   }
 
   return (
-    <Box p={4}>
-      <Heading size="2xl" mb={6}>
+    <Box p={{ base: 4, md: 6 }}>
+      <Heading size={{ base: "lg", md: "2xl" }} mb={6}>
         {patient.name}'s Lab Results
       </Heading>
 
       {/* Year Filter */}
       {years.length > 0 && (
-        <Box mb={4}>
+        <Box mb={6}>
           <Select.Root
             collection={yearCollection}
             size="sm"
@@ -123,53 +127,30 @@ export default function Results() {
         <Text>No lab results found for {selectedYear}.</Text>
       )}
 
-      {/* Render each lab result for the selected year */}
       <VStack align="stretch">
         {selectedResults.map((result, idx) => (
-          <Box key={idx} mb={6} p={4} borderWidth="1px" borderRadius="md">
-            {/* PDF Download Button */}
-            <DownloadPDFButton
-              patient={{
-                uid: patient.uid,
-                patientId: patient.patientId,
-                name: patient.name || "",
-                dob: patient.dob,
-                gender: patient.gender,
-                email: patient.email || "",
-                phone: patient.phone,
-                address: patient.address,
-                primaryCarePhysician: patient.primaryCarePhysician,
-                insurance: patient.insurance,
-                labResults: patient.labResults,
-              }}
-              labResult={result}
-            />
+          <Box
+            key={idx}
+            mb={8}
+            p={{ base: 4, md: 6 }}
+            borderWidth="1px"
+            borderRadius="lg"
+          >
+            <DownloadPDFButton patient={patient} labResult={result} />
 
-            <Text mb={4}>
+            <Text mb={6} fontSize="sm" color="gray.600">
               Specimen Collected:{" "}
               {format(new Date(result.date), "MMM dd, yyyy hh:mm a")}
             </Text>
 
-            {/* Results Table */}
             {Object.entries(sections).map(([sectionName, tests]) => (
-              <Box key={sectionName} mb={6}>
-                <Heading size="md" mb={2}>
+              <Box key={sectionName} mb={8}>
+                <Heading size="md" mb={4}>
                   {sectionName}
                 </Heading>
-
-                <Table.Root size="sm">
-                  <Table.Header>
-                    <Table.Row>
-                      <Table.ColumnHeader>Test</Table.ColumnHeader>
-                      <Table.ColumnHeader>Result</Table.ColumnHeader>
-                      <Table.ColumnHeader>Units</Table.ColumnHeader>
-                      <Table.ColumnHeader>Reference Range</Table.ColumnHeader>
-                      <Table.ColumnHeader>Status</Table.ColumnHeader>
-                      <Table.ColumnHeader>Graph past results</Table.ColumnHeader>
-                    </Table.Row>
-                  </Table.Header>
-
-                  <Table.Body>
+                {/* MOBILE VIEW */}
+                {isMobile ? (
+                  <VStack align="stretch" gap={3}>
                     {tests.map((test) => {
                       const value = result?.results?.[test];
                       const range = result?.referenceRanges?.[test];
@@ -181,42 +162,146 @@ export default function Results() {
                           : Status.Normal;
 
                       return (
-                        <Table.Row key={test}>
-                          <Table.Cell>{test}</Table.Cell>
-                          <Table.Cell>{value ?? "—"}</Table.Cell>
-                          <Table.Cell>{result?.units?.[test] ?? "—"}</Table.Cell>
-                          <Table.Cell>{range ?? "—"}</Table.Cell>
-                          <Table.Cell>
-                            <Badge
-                              colorPalette={getStatusColor(status)}
-                              variant={
-                                status === Status.Normal ? "subtle" : "solid"
-                              }
+                        <Card.Root
+                          key={test}
+                          borderWidth="1px"
+                          borderRadius="md"
+                          borderLeft="4px solid"
+                          borderLeftColor={
+                            status === Status.Normal ? "green.400" : "red.400"
+                          }
+                        >
+                          <Card.Body p={4}>
+                            {/* Test Name */}
+                            <Text fontWeight="bold" mb={1}>
+                              {test}
+                            </Text>
+
+                            {/* Result */}
+                            <Text fontSize="sm">
+                              <b>Result:</b> {value ?? "—"}{" "}
+                              {result?.units?.[test] ?? ""}
+                            </Text>
+
+                            {/* Reference */}
+                            <Text fontSize="sm">
+                              <b>Reference:</b> {range ?? "—"}
+                            </Text>
+
+                            {/* Status + Graph */}
+                            <Flex
+                              mt={4}
+                              p={3}
+                              borderWidth="1px"
+                              borderRadius="lg"
+                              bg="gray.50"
+                              align="center"
+                              justify="space-between"
                             >
-                              {status}
-                            </Badge>
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Icon
-                              as={FiBarChart2}
-                              cursor="pointer"
-                              color="teal.500"
-                              _hover={{ color: "teal.700" }}
-                              onClick={() => handleGraphClick(test)}
-                            />
-                          </Table.Cell>
-                        </Table.Row>
+                              <Badge
+                                colorPalette={getStatusColor(status)}
+                                variant={
+                                  status === Status.Normal ? "subtle" : "solid"
+                                }
+                                fontSize="0.8rem"
+                                px={3}
+                                py={1}
+                                borderRadius="full"
+                              >
+                                {status}
+                              </Badge>
+
+                              <Icon
+                                as={FiBarChart2}
+                                boxSize={6}
+                                cursor="pointer"
+                                color="teal.500"
+                                _hover={{
+                                  color: "teal.700",
+                                  transform: "scale(1.1)",
+                                }}
+                                transition="0.2s"
+                                onClick={() => handleGraphClick(test)}
+                              />
+                            </Flex>
+                          </Card.Body>
+                        </Card.Root>
                       );
                     })}
-                  </Table.Body>
-                </Table.Root>
+                  </VStack>
+                ) : (
+                  /* DESKTOP TABLE */
+                  <Table.Root size="sm">
+                    <Table.Header
+                      position="sticky"
+                      top="0"
+                      bg="white"
+                      zIndex="1"
+                    >
+                      <Table.Row>
+                        <Table.ColumnHeader>Test</Table.ColumnHeader>
+                        <Table.ColumnHeader>Result</Table.ColumnHeader>
+                        <Table.ColumnHeader>Units</Table.ColumnHeader>
+                        <Table.ColumnHeader>Reference Range</Table.ColumnHeader>
+                        <Table.ColumnHeader>Status</Table.ColumnHeader>
+                        <Table.ColumnHeader>Graph</Table.ColumnHeader>
+                      </Table.Row>
+                    </Table.Header>
+
+                    <Table.Body>
+                      {tests.map((test) => {
+                        const value = result?.results?.[test];
+                        const range = result?.referenceRanges?.[test];
+                        const numericValue =
+                          typeof value === "number" ? value : Number(value);
+
+                        const status: Status =
+                          range && !isNaN(numericValue)
+                            ? getStatus(numericValue, range)
+                            : Status.Normal;
+
+                        return (
+                          <Table.Row key={test}>
+                            <Table.Cell fontWeight="medium">{test}</Table.Cell>
+                            <Table.Cell>{value ?? "—"}</Table.Cell>
+                            <Table.Cell>
+                              {result?.units?.[test] ?? "—"}
+                            </Table.Cell>
+                            <Table.Cell>{range ?? "—"}</Table.Cell>
+                            <Table.Cell>
+                              <Badge
+                                colorPalette={getStatusColor(status)}
+                                variant={
+                                  status === Status.Normal ? "subtle" : "solid"
+                                }
+                              >
+                                {status}
+                              </Badge>
+                            </Table.Cell>
+                            <Table.Cell>
+                              <Icon
+                                as={FiBarChart2}
+                                cursor="pointer"
+                                color="teal.500"
+                                _hover={{
+                                  color: "teal.700",
+                                }}
+                                boxSize={6}
+                                onClick={() => handleGraphClick(test)}
+                              />
+                            </Table.Cell>
+                          </Table.Row>
+                        );
+                      })}
+                    </Table.Body>
+                  </Table.Root>
+                )}
               </Box>
             ))}
           </Box>
         ))}
       </VStack>
-
-      <Text mt={4}>
+      <Text mt={6} fontSize="sm" color="gray.600">
         Have additional questions concerning your results? Please consult your
         doctor.
       </Text>

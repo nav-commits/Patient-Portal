@@ -1,12 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { VStack, Flex, Icon, Text, Box } from "@chakra-ui/react";
+import {
+  VStack,
+  Flex,
+  Icon,
+  Text,
+  Drawer,
+  Portal,
+  Box,
+} from "@chakra-ui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 import { HiDocumentReport, HiUser, HiViewGrid } from "react-icons/hi";
 import Image from "next/image";
+import { useState } from "react";
 
 const links = [
   { label: "Home", href: "/patient", icon: HiViewGrid },
@@ -14,64 +22,75 @@ const links = [
   { label: "Personal Info", href: "/patient/profile", icon: HiUser },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  isDrawer?: boolean;
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export default function Sidebar({ isDrawer, isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  return (
+  const SidebarContent = (
     <VStack
       width={isCollapsed ? "80px" : "250px"}
-      bgColor="blue.900"
-      borderRight="1px solid"
-      borderColor="gray.800"
-      p={6}
+      transition="width 0.2s ease"
+      bg="blue.900"
+      p={4}
       align="stretch"
-      transition="width 0.2s"
       minH="100vh"
     >
+      {/* TOP SECTION */}
       <Flex
-        w="full"
         align="center"
         justify={isCollapsed ? "center" : "space-between"}
-        gap={4}
-        mt={2}
+        mb={10}
       >
+        {/* Hide logo when collapsed */}
         {!isCollapsed && (
           <Box>
             <Image
               src="/Images/mhl-logo-white.png"
-              alt="Med-Health Lab Logo"
-              width={200}
-              height={70}
+              alt="Logo"
+              width={150}
+              height={50}
               style={{ objectFit: "contain" }}
             />
           </Box>
         )}
-        <Icon
-          as={isCollapsed ? IoArrowForward : IoArrowBack}
-          w={6}
-          h={6}
-          color="white"
-          cursor="pointer"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-        />
+        {!isDrawer && (
+          <Icon
+            as={isCollapsed ? IoArrowForward : IoArrowBack}
+            w={5}
+            h={5}
+            color="white"
+            cursor="pointer"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          />
+        )}
       </Flex>
-      <VStack align="stretch" flex="1" mt="100px">
+
+      {/* NAVIGATION */}
+      <VStack align="stretch" gap={2}>
         {links.map((link) => {
           const isActive = pathname === link.href;
+
           return (
-            <Link key={link.label} href={link.href} passHref>
+            <Link key={link.label} href={link.href}>
               <Flex
                 align="center"
+                justify={isCollapsed ? "center" : "flex-start"}
                 gap={isCollapsed ? 0 : 3}
                 px={3}
-                py={2}
+                py={3}
                 borderRadius="md"
                 cursor="pointer"
-                bg={isActive ? "white" : "transparent"}
-                _hover={{ bg: isActive ? "white" : "blue.800" }}
                 transition="all 0.2s"
-                justify={isCollapsed ? "center" : "flex-start"}
+                bg={isActive ? "white" : "transparent"}
+                _hover={{
+                  bg: isActive ? "white" : "blue.800",
+                }}
               >
                 <Icon
                   as={link.icon}
@@ -81,7 +100,7 @@ export default function Sidebar() {
                 />
                 {!isCollapsed && (
                   <Text
-                    fontWeight="semibold"
+                    fontWeight="medium"
                     color={isActive ? "blue.900" : "white"}
                   >
                     {link.label}
@@ -94,4 +113,31 @@ export default function Sidebar() {
       </VStack>
     </VStack>
   );
+
+  if (isDrawer) {
+    return (
+      <Drawer.Root open={isOpen} onOpenChange={onClose}>
+        <Portal>
+          <Drawer.Positioner
+            inset={0}
+            bg="blackAlpha.600"
+            display="flex"
+            justifyContent="flex-start"
+          >
+            <Drawer.Content
+              maxW={isCollapsed ? "80px" : "250px"}
+              w="full"
+              h="100vh"
+              p={0}
+              bg="blue.900"
+            >
+              {SidebarContent}
+            </Drawer.Content>
+          </Drawer.Positioner>
+        </Portal>
+      </Drawer.Root>
+    );
+  }
+
+  return SidebarContent;
 }
